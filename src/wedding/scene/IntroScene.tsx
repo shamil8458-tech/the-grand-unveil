@@ -92,7 +92,12 @@ function Envelope({
   const card = useRef<THREE.Mesh>(null!);
   const light = useRef<THREE.PointLight>(null!);
   const camera = useThree((s) => s.camera);
+  const size = useThree((s) => s.size);
   const phase = useRef({ opening: false, t: 0, done: false });
+
+  // Keep the envelope inside the frame on narrow (phone) screens.
+  const aspect = size.width / Math.max(1, size.height);
+  const envelopeScale = Math.min(1, (5.0 * aspect) / 4.2);
 
   const date = useMemo(() => weddingDate(content), [content]);
   const cardTexture = useCardTexture(content.first, content.second, date);
@@ -175,6 +180,7 @@ function Envelope({
   return (
     <group
       ref={group}
+      scale={envelopeScale}
       onPointerDown={start}
       onPointerOver={() => (document.body.style.cursor = "pointer")}
       onPointerOut={() => (document.body.style.cursor = "auto")}
