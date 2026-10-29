@@ -43,6 +43,7 @@ function Hearts({ count = 8 }: { count?: number }) {
     const t = state.clock.elapsedTime;
     data.forEach((h, i) => {
       const mesh = group.current.children[i];
+      if (!mesh) return;
       mesh.position.y = h.baseY + Math.sin(t * h.speed + h.phase) * 0.55;
       mesh.position.x = h.baseX + Math.sin(t * h.speed * 0.6 + h.phase * 1.7) * 0.4;
       mesh.rotation.y = Math.sin(t * 0.4 + h.phase) * 0.6;
@@ -82,7 +83,7 @@ function Burst() {
       (c) => new THREE.Color(c),
     );
     for (let i = 0; i < BURST_COUNT; i++) {
-      const c = palette[i % palette.length];
+      const c = palette[i % palette.length]!;
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -130,16 +131,18 @@ function Burst() {
     life.current -= dt;
     const pos = geometry.getAttribute("position") as THREE.BufferAttribute;
     const drag = Math.exp(-1.4 * dt);
+    const v = vel.current;
     for (let i = 0; i < BURST_COUNT; i++) {
-      vel.current[i * 3 + 1] -= 2.6 * dt;
-      vel.current[i * 3] *= drag;
-      vel.current[i * 3 + 1] *= drag;
-      vel.current[i * 3 + 2] *= drag;
+      const i3 = i * 3;
+      v[i3]! = (v[i3] ?? 0) * drag;
+      v[i3 + 1]! = (v[i3 + 1] ?? 0) - 2.6 * dt;
+      v[i3 + 1]! *= drag;
+      v[i3 + 2]! = (v[i3 + 2] ?? 0) * drag;
       pos.setXYZ(
         i,
-        pos.getX(i) + vel.current[i * 3] * dt,
-        pos.getY(i) + vel.current[i * 3 + 1] * dt,
-        pos.getZ(i) + vel.current[i * 3 + 2] * dt,
+        pos.getX(i) + v[i3]! * dt,
+        pos.getY(i) + v[i3 + 1]! * dt,
+        pos.getZ(i) + v[i3 + 2]! * dt,
       );
     }
     pos.needsUpdate = true;

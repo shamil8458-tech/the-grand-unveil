@@ -35,7 +35,7 @@ export function PetalField({
 
   useEffect(() => {
     petals.forEach((p, i) => {
-      tmpColor.set(PETAL_COLORS[p.colorIndex]);
+      tmpColor.set(PETAL_COLORS[p.colorIndex] ?? PETAL_COLORS[0]!);
       ref.current.setColorAt(i, tmpColor);
     });
     if (ref.current.instanceColor) ref.current.instanceColor.needsUpdate = true;
@@ -44,14 +44,14 @@ export function PetalField({
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05);
     const t = state.clock.elapsedTime;
-    for (let i = 0; i < petals.length; i++) {
-      const s = stepPetal(petals[i], t, dt, bounds);
+    petals.forEach((p, i) => {
+      const s = stepPetal(p, t, dt, bounds);
       dummy.position.set(s.x, s.y, s.z);
       dummy.rotation.set(s.rotX, 0, s.rotZ);
       dummy.scale.setScalar(s.size);
       dummy.updateMatrix();
       ref.current.setMatrixAt(i, dummy.matrix);
-    }
+    });
     ref.current.instanceMatrix.needsUpdate = true;
   });
 

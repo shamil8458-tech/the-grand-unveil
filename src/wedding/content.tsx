@@ -53,7 +53,7 @@ export function defaultContent(): WeddingContent {
 
 function isValid(c: unknown): c is WeddingContent {
   if (!c || typeof c !== "object") return false;
-  const o = c as Record<string, unknown>;
+  const o = c as WeddingContent;
   return (
     typeof o.first === "string" &&
     typeof o.second === "string" &&
