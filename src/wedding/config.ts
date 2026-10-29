@@ -1,5 +1,9 @@
 // Wedding content — edit these values to personalize the site.
+// These are the built-in demo defaults; the in-app customize panel
+// overrides them per browser (persisted locally).
 export const WEDDING = {
+  rsvpNote: "Kindly respond by April 1, 2027.",
+
   couple: {
     first: "Alex",
     second: "Sophia",
